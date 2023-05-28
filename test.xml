@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vehicles xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="test.xsd">
-  <car>
+  <car color="blue">
     <brand>Audi</brand>
     <model>A6</model>
     <year>2022</year>
@@ -23,7 +23,7 @@
     <shape>Sedan</shape>
     <price>50000</price>
   </car>
-  <car>
+  <car color="red">
     <brand>BMW</brand>
     <model>X5</model>
     <year>2021</year>
@@ -45,7 +45,7 @@
     <shape>SUV</shape>
     <price>60000</price>
   </car>
-  <motorcycle>
+  <motorcycle color="orange">
     <brand>Yamaha</brand>
     <model>YZF-R6</model>
     <year>2020</year>
@@ -64,7 +64,7 @@
     <shape>Sport</shape>
     <price>10000</price>
   </motorcycle>
-  <truck>
+  <truck color="green">
     <type>Truck</type>
     <brand>Volvo</brand>
     <model>FH16</model>
@@ -87,7 +87,7 @@
     <shape>Box</shape>
     <price>80000</price>
   </truck>
-  <tricycle>
+  <tricycle color="pink">
     <brand>Piaggio</brand>
     <model>MP3</model>
     <year>2021</year>

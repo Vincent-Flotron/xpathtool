@@ -34,17 +34,28 @@ def display_history(hist_file):
     # Display the history of all XPath requests
     with open(hist_file, 'r') as file:
         reader = csv.reader(file, delimiter=';')
+        i = 0
         for row in reader:
-            print(row[1])
+            if row[2] != "" and i%2==0:
+                print(f"{(row[1] + ' ' * 3 + '~').ljust(45,'-')}--~   {row[2][:80]}")
+                i += 1
+            else:
+                print(f"{(row[1] + ' ' * 8 + ' ').ljust(45,' ')}      {row[2][:80]}")
+                i += 1
 
 
 def display_successful_history(hist_file):
     # Display the history of successful XPath requests
     with open(hist_file, 'r') as file:
         reader = csv.reader(file, delimiter=';')
+        i = 0
         for row in reader:
-            if row[2] != "[]":
-                print(row[1])
+            if row[2] != "" and i%2==0:
+                print(f"{(row[1] + ' ' * 3 + '~').ljust(45,'-')}--~   {row[2][:80]}")
+                i += 1
+            elif row[2] != "" and i%2==1:
+                print(f"{(row[1] + ' ' * 8 + ' ').ljust(45,' ')}      {row[2][:80]}")
+                i += 1
 
 
 def colorize_tags(xml_string):
@@ -84,12 +95,12 @@ def main():
             res += etree.tostring(element, encoding="unicode")
 
         # Colorize the tags
-        res = colorize_tags(res)
+        res_to_display = colorize_tags(res)
 
         # Display the result
         print(f"XPath query: {args.xpath_query}")
         print("XPath query result:")
-        print(res)
+        print(res_to_display)
 
         # Log the query and result
         log_query_result(args.xpath_query, res.replace("\n", "\\n"))
