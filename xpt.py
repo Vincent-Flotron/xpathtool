@@ -3,6 +3,10 @@ import logging
 import datetime
 import csv
 from lxml import etree
+from colorama import init, Fore, Style
+
+# Initialize colorama
+init()
 
 
 def perform_xpath_query(input_xml, xpath_query):
@@ -39,8 +43,15 @@ def display_successful_history(hist_file):
     with open(hist_file, 'r') as file:
         reader = csv.reader(file, delimiter=';')
         for row in reader:
-            if row[2] != '':
+            if row[2] != "[]":
                 print(row[1])
+
+
+def colorize_tags(xml_string):
+    # Colorize the XML tags
+    xml_string = xml_string.replace("<", f"{Fore.BLUE}<")
+    xml_string = xml_string.replace(">", f">{Style.RESET_ALL}")
+    return xml_string
 
 
 def main():
@@ -51,8 +62,7 @@ def main():
     parser.add_argument("-l", "--hist", action="store_true", help="Display history of all XPath requests")
     parser.add_argument("-w", "--worked", action="store_true", help="Display history of successful XPath requests")
     args = parser.parse_args()
-    # args.hist = True
-    args.worked = True
+
     # Set up logging
     setup_logging()
 
@@ -72,6 +82,9 @@ def main():
         res = ""
         for element in result:
             res += etree.tostring(element, encoding="unicode")
+
+        # Colorize the tags
+        res = colorize_tags(res)
 
         # Display the result
         print(f"XPath query: {args.xpath_query}")

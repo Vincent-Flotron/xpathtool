@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vehicles xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:noNamespaceSchemaLocation="vehicles.xsd">
+          xsi:noNamespaceSchemaLocation="test.xsd">
   <car>
     <brand>Audi</brand>
     <model>A6</model>
