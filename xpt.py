@@ -4,6 +4,7 @@ import datetime
 import csv
 from lxml import etree
 from colorama import init, Fore, Style
+from inifile import IniFileManager
 
 # Initialize colorama
 init()
@@ -68,8 +69,8 @@ def colorize_tags(xml_string):
 def main():
     # Set up argument parsing
     parser = argparse.ArgumentParser(description="Perform XPath query on an XML file.")
-    parser.add_argument("input_xml", nargs='?', help="XML file to query")
     parser.add_argument("xpath_query", nargs='?', help="XPath query to perform")
+    parser.add_argument("input_xml", nargs='?', default='?', help="XML file to query")
     parser.add_argument("-l", "--hist", action="store_true", help="Display history of all XPath requests")
     parser.add_argument("-w", "--worked", action="store_true", help="Display history of successful XPath requests")
     args = parser.parse_args()
@@ -77,14 +78,24 @@ def main():
     # Set up logging
     setup_logging()
 
+    # Ini file
+    ini_manager = IniFileManager('xpt.ini')
+
+    # Create the INI file and write the input_xml value
+    if(args.input_xml != "?"):
+        ini_manager.create_ini_file('Section1', 'input_xml', args.input_xml)
+    else:
+        # Load the input_xml value from the INI file
+        args.input_xml = ini_manager.load_input_xml_from_ini('Section1', 'input_xml')
+
     if args.hist:
         display_history("xpath-queries.log")
     elif args.worked:
         display_successful_history("xpath-queries.log")
     else:
         # Check if input_xml and xpath_query are provided
-        if not args.input_xml or not args.xpath_query:
-            parser.error("The following arguments are required: input_xml, xpath_query")
+        if not args.xpath_query:
+            parser.error("The following argument is required: xpath_query")
         
         # Perform the XPath query
         result = perform_xpath_query(args.input_xml, args.xpath_query)
