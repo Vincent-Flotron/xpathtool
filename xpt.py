@@ -5,6 +5,7 @@ import csv
 from lxml import etree
 from colorama import init, Fore, Style
 from inifile import IniFileManager
+import re
 
 # Initialize colorama
 init()
@@ -61,8 +62,31 @@ def display_successful_history(hist_file):
 
 def colorize_tags(xml_string):
     # Colorize the XML tags
-    xml_string = xml_string.replace("<", f"{Fore.BLUE}<")
-    xml_string = xml_string.replace(">", f">{Style.RESET_ALL}")
+    xml_string = xml_string.replace("<", f"{Fore.GREEN}<{Style.RESET_ALL}{Fore.BLUE}")
+    xml_string = xml_string.replace(">", f"{Style.RESET_ALL}{Fore.GREEN}>{Style.RESET_ALL}")
+    return xml_string
+
+
+def get_match_groups(text, pattern):
+    #pattern = r"(>)([\+\-]?\d*\.?\d*e?[\+\-]?\d*)(<)"
+    matches = re.search(pattern, text)
+    if matches:
+        group1 = matches.group(1)
+        group2 = matches.group(2)
+        group3 = matches.group(3)
+        return group1, group2, group3
+    else:
+        return None
+
+
+def colorize_tag_number(xml_string):
+    # Colorize the number inside tags
+    match_groups = get_match_groups(xml_string, r"(>)([\+\-]?\d*\.?\d*e?[\+\-]?\d*)(<)")
+    if match_groups:
+        group1, group2, group3 = match_groups
+        colored = f"{group1}{Fore.RED}{group2}{Style.RESET_ALL}{group3}"
+        xml_string = re.sub(r">[\+\-]?\d*\.?\d*e?[\+\-]?\d*<", colored, xml_string)
+
     return xml_string
 
 
@@ -106,7 +130,8 @@ def main():
             res += etree.tostring(element, encoding="unicode")
 
         # Colorize the tags
-        res_to_display = colorize_tags(res)
+        res_to_display = colorize_tag_number(res)
+        res_to_display = colorize_tags(res_to_display)
 
         # Display the result
         print(f"XPath query: {args.xpath_query}")
