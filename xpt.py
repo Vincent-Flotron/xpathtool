@@ -10,6 +10,7 @@ import re
 # Initialize colorama
 init()
 
+hist_result_length = 200
 
 def perform_xpath_query(input_xml, xpath_query):
     # Parse the XML file
@@ -39,10 +40,10 @@ def display_history(hist_file):
         i = 0
         for row in reader:
             if row[2] != "" and i%2==0:
-                print(f"{(row[1] + ' ' * 3 + '~').ljust(45,'-')}--~   {row[2][:80]}")
+                print(f"{(row[1] + ' ' * 3 + '~').ljust(45,'-')}--~   {row[2][:hist_result_length]}")
                 i += 1
             else:
-                print(f"{(row[1] + ' ' * 8 + ' ').ljust(45,' ')}      {row[2][:80]}")
+                print(f"{(row[1] + ' ' * 8 + ' ').ljust(45,' ')}      {row[2][:hist_result_length]}")
                 i += 1
 
 
@@ -53,10 +54,10 @@ def display_successful_history(hist_file):
         i = 0
         for row in reader:
             if row[2] != "" and i%2==0:
-                print(f"{(row[1] + ' ' * 3 + '~').ljust(45,'-')}--~   {row[2][:80]}")
+                print(f"{(row[1] + ' ' * 3 + '~').ljust(45,'-')}--~   {row[2][:hist_result_length]}")
                 i += 1
             elif row[2] != "" and i%2==1:
-                print(f"{(row[1] + ' ' * 8 + ' ').ljust(45,' ')}      {row[2][:80]}")
+                print(f"{(row[1] + ' ' * 8 + ' ').ljust(45,' ')}      {row[2][:hist_result_length]}")
                 i += 1
 
 
@@ -68,7 +69,6 @@ def colorize_tags(xml_string):
 
 
 def get_match_groups(text, pattern):
-    #pattern = r"(>)([\+\-]?\d*\.?\d*e?[\+\-]?\d*)(<)"
     matches = re.search(pattern, text)
     if matches:
         group1 = matches.group(1)
@@ -81,13 +81,16 @@ def get_match_groups(text, pattern):
 
 def colorize_tag_number(xml_string):
     # Colorize the number inside tags
-    match_groups = get_match_groups(xml_string, r"(>)([\+\-]?\d*\.?\d*e?[\+\-]?\d*)(<)")
-    if match_groups:
-        group1, group2, group3 = match_groups
-        colored = f"{group1}{Fore.RED}{group2}{Style.RESET_ALL}{group3}"
-        xml_string = re.sub(r">[\+\-]?\d*\.?\d*e?[\+\-]?\d*<", colored, xml_string)
+    xml_numb_col = ""
+    for line in xml_string.split("\n"):
+        match_groups = get_match_groups(line, r"(>)([\+\-]?\d*\.?\d*e?[\+\-]?\d*)(<)")
+        if match_groups:
+            group1, group2, group3 = match_groups
+            colored = f"{group1}{Fore.RED}{group2}{Style.RESET_ALL}{group3}"
+            line = re.sub(r">[\+\-]?\d*\.?\d*e?[\+\-]?\d*<", colored, line)
+        xml_numb_col += line + "\n"
 
-    return xml_string
+    return xml_numb_col
 
 
 def main():
